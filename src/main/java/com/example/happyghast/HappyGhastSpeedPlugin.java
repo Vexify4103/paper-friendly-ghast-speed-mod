@@ -1,11 +1,11 @@
 package com.example.happyghast;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bstats.bukkit.Metrics;
 
@@ -84,10 +84,14 @@ public class HappyGhastSpeedPlugin extends JavaPlugin {
         }
     }
 
+    // Only the ghasts being ridden right now need the new speed at once. Every other ghast gets it
+    // when it is loaded or mounted (see HappyGhastSpawnListener), so there is no need to go through
+    // every entity in every world.
     private void updateAllExistingHappyGhasts() {
-        for (World world : Bukkit.getWorlds()) {
-            for (Entity entity : world.getEntities()) {
-                applySpeed(entity);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Entity vehicle = player.getVehicle();
+            if (vehicle != null) {
+                applySpeed(vehicle);
             }
         }
     }
